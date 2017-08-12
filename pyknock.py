@@ -21,7 +21,7 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect((address, port))
 
-    myip = s.getsockname()[0]
+    myip = socket.inet_pton(socket.AF_INET, s.getsockname()[0])
     opcode = '\x01' if cmd == 'open' else '\x02'
     digest = hmac.new(psk, opcode + myip, hashlib.sha256).digest()
     s.sendall(opcode + digest)

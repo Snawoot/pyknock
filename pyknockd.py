@@ -29,6 +29,7 @@ def main():
     try:
         while True:
             data, addr = s.recvfrom(4096)
+            ip4 = socket.inet_pton(socket.AF_INET, addr[0])
             if not data:
                 continue
 
@@ -36,7 +37,7 @@ def main():
             signature = data[1:]
             if hmac.compare_digest(
                     hmac.new(
-                            psk, opcode + addr[0], hashlib.sha256
+                            psk, opcode + ip4, hashlib.sha256
                         ).digest(),
                     signature):
                 if opcode == '\x01':
