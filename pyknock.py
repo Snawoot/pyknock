@@ -12,10 +12,13 @@ def main():
     parser.add_argument("address", help="remote address")
     parser.add_argument("port", help="remote port", type=int)
     parser.add_argument("psk", help="pre-shared key used to authenticate ourselves to knocked peer")
-    parser.add_argument("-s", "--sign-address", help="sign specified address instead of socket source address")
+    parser.add_argument("-S", "--sign-address", help="sign specified address instead of socket source address")
+    parser.add_argument("-s", "--source-address", help="use following source address to send packet")
     args = parser.parse_args()
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    if args.source_address:
+        s.bind((args.source_address, 0))
     s.connect((args.address, args.port))
 
     if args.sign_address:
