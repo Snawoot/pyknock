@@ -9,9 +9,9 @@ import argparse
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", help="command: open or close", choices=["open", "close"])
-    parser.add_argument("address", help="remote address")
-    parser.add_argument("port", help="remote port", type=int)
-    parser.add_argument("psk", help="pre-shared key used to authenticate ourselves to knocked peer")
+    parser.add_argument("address", help="remote address", metavar="HOST")
+    parser.add_argument("-p", "--port", help="remote port", type=int, default=60120)
+    parser.add_argument("psk", help="pre-shared key used to authenticate ourselves to knocked peer", metavar="PSK")
     parser.add_argument("-S", "--sign-address", help="sign specified address instead of socket source address")
     parser.add_argument("-s", "--source-address", help="use following source address to send packet")
     args = parser.parse_args()
