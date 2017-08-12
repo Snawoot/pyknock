@@ -12,7 +12,7 @@ Place file anywhere you want and run.
 Server example:
 
 ```bash
-./pyknockd.py 60120 MySecretPSK 'ipset add myallowedset $ip timeout 3600' 'ipset del myallowedset $ip'
+./pyknockd.py 60120 MySecretPSK 'ipset add -exist myallowedset $ip timeout 3600' 'ipset del -exist myallowedset $ip'
 ```
 
 Client example:
