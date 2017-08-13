@@ -5,6 +5,11 @@ import socket
 import hashlib
 import hmac
 import argparse
+import time
+import struct
+
+CODE_OPEN = 1
+CODE_CLOSE = 2
 
 def main():
     parser = argparse.ArgumentParser()
@@ -25,9 +30,11 @@ def main():
         myip = socket.inet_pton(socket.AF_INET, args.sign_address)
     else:
         myip = socket.inet_pton(socket.AF_INET, s.getsockname()[0])
-    opcode = '\x01' if args.command == 'open' else '\x02'
-    digest = hmac.new(args.psk, opcode + myip, hashlib.sha256).digest()
-    s.sendall(opcode + digest)
+
+    opcode = CODE_OPEN if args.command == 'open' else CODE_CLOSE
+    msg = struct.pack('<Bd', opcode, time.time())
+    digest = hmac.new(args.psk, msg + myip, hashlib.sha256).digest()
+    s.sendall(msg + digest)
 
 if __name__ == '__main__':
     main()
