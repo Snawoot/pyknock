@@ -10,6 +10,7 @@ import argparse
 import struct
 import time
 
+
 DIGEST = hashlib.sha256
 DIGEST_SIZE = DIGEST().digest_size
 BODY_SIZE = 1 + 8
@@ -18,24 +19,76 @@ CODE_OPEN = 1
 CODE_CLOSE = 2
 MSG_FMT = "<Bd%ds" % (DIGEST_SIZE)
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-b", "--bind-address", help="bind address", default="")
-    parser.add_argument("-p", "--port", help="bind port", type=int, default=60120, metavar="PORT")
-    parser.add_argument("-t", "--time-drift", help="allowed time drift in seconds between client and server. Value may be a floating point number", type=float, default=60, metavar="DRIFT")
-    parser.add_argument("psk", help="pre-shared key used to authenticate clients", metavar="PSK")
-    parser.add_argument("open_cmd", help="template of command used to enable access. Example: \"ipset add -exist myset $ip\". Available variables: $ip, $port", metavar="OPEN_CMD")
-    parser.add_argument("close_cmd", help="template of command used to disable access. Example: \"ipset del -exist myset $ip\". Available variables: $ip, $port", metavar="CLOSE_CMD")
-    args = parser.parse_args()
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+def detect_af(addr):
+    A = None
+    try:
+        A = socket.inet_pton(socket.AF_INET, addr)
+    except socket.error:
+        pass
+    else:
+        return (socket.AF_INET, A)
+
+    try:
+        A = socket.inet_pton(socket.AF_INET6, addr)
+    except socket.error:
+        pass
+    else:
+        return (socket.AF_INET6, A)
+
+    return (None, A)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-b",
+                        "--bind-address",
+                        help="bind address",
+                        default="")
+    parser.add_argument("-p",
+                        "--port",
+                        help="bind port",
+                        type=int, default=60120,
+                        metavar="PORT")
+    parser.add_argument("-t",
+                        "--time-drift",
+                        help="allowed time drift in seconds"
+                        " between client and server. "
+                        "Value may be a floating point number",
+                        type=float,
+                        default=60,
+                        metavar="DRIFT")
+    parser.add_argument("psk",
+                        help="pre-shared key used to authenticate clients",
+                        metavar="PSK")
+    parser.add_argument("open_cmd",
+                        help="template of command used to enable access. "
+                        "Example: \"ipset add -exist myset $ip\". "
+                        "Available variables: $ip, $port",
+                        metavar="OPEN_CMD")
+    parser.add_argument("close_cmd",
+                        help="template of command used to disable access. "
+                        "Example: \"ipset del -exist myset $ip\". "
+                        "Available variables: $ip, $port",
+                        metavar="CLOSE_CMD")
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+
+    bf, ba = detect_af(args.bind_address)
+    s = socket.socket(bf if bf is not None else socket.AF_INET,
+                      socket.SOCK_DGRAM)
     s.bind((args.bind_address, args.port))
+
     open_cmd = string.Template(args.open_cmd)
     close_cmd = string.Template(args.close_cmd)
+
     try:
         while True:
             data, addr = s.recvfrom(4096)
-            ip4 = socket.inet_pton(socket.AF_INET, addr[0])
+            binaddr = detect_af(addr[0])[1]
 
             if not data:
                 continue
@@ -50,7 +103,7 @@ def main():
 
             if not hmac.compare_digest(
                     hmac.new(
-                            args.psk, data[:BODY_SIZE] + ip4, DIGEST
+                            args.psk, data[:BODY_SIZE] + binaddr, DIGEST
                         ).digest(),
                     digest):
                 continue
@@ -65,6 +118,7 @@ def main():
                 )
     except KeyboardInterrupt:
         pass
+
 
 if __name__ == '__main__':
     main()
