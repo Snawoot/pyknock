@@ -49,6 +49,12 @@ def parse_args():
     return parser.parse_args()
 
 
+def panic(msg, code):
+    print >> sys.stderr, msg
+    sys.exit(code)
+    pass
+
+
 def main():
     args = parse_args()
 
@@ -69,16 +75,14 @@ def main():
         try:
             src_af = detect_af(args.source_address)
         except:
-            print >> sys.stderr, "Malformed source address"
-            sys.exit(4)
+            panic("Malformed source address", 4)
 
     sign_af = socket.AF_UNSPEC
     if args.sign_address:
         try:
             sign_af = detect_af(args.sign_address)
         except:
-            print >> sys.stderr, "Malformed sign address"
-            sys.exit(5)
+            panic("Malformed sign address", 5)
 
     for ai_entry in dst_ai:
         af = ai_entry[0]
@@ -88,7 +92,7 @@ def main():
         s = socket.socket(af, socket.SOCK_DGRAM)
         if args.source_address:
             s.bind((args.source_address, 0))
-        s.connect((args.address, args.port))
+        s.connect((ai_entry[4][0], args.port))
 
         if args.sign_address:
             myip = socket.inet_pton(sign_af, args.sign_address)
