@@ -14,8 +14,8 @@ import time
 DIGEST = hashlib.sha256
 DIGEST_SIZE = DIGEST().digest_size
 
-HDR_SIZE = DIGEST_SIZE + 1 + 8 + 4
 HDR_FMT = "<%dsBdi" % (DIGEST_SIZE,)
+HDR_SIZE = struct.calcsize(HDR_FMT)
 
 CODE_OPEN = 1
 CODE_CLOSE = 2
