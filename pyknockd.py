@@ -106,15 +106,13 @@ def main():
             str_af = af_map.get(af, str(af))
             str_addr = socket.inet_ntop(af, binaddr)
             if opcode == CODE_OPEN:
-                os.system(
-                    open_cmd.safe_substitute(ip = str_addr,
-                                             af = str_af,
-                                             cmd = "open"))
+                os.system(open_cmd.safe_substitute(ip=str_addr,
+                                                   af=str_af,
+                                                   cmd="open"))
             elif opcode == CODE_CLOSE:
-                os.system(
-                    close_cmd.safe_substitute(ip = str_addr,
-                                              af = str_af,
-                                              cmd = "close"))
+                os.system(close_cmd.safe_substitute(ip=str_addr,
+                                                    af=str_af,
+                                                    cmd="close"))
     except Exception as e:
         print >> sys.stderr, "Unhandled Exception: %s" % (str(e),)
 
