@@ -84,6 +84,8 @@ def main():
         except:
             panic("Malformed sign address", 5)
 
+    opcode = CODE_OPEN if args.command == 'open' else CODE_CLOSE
+
     for ai_entry in dst_ai:
         af = ai_entry[0]
         if src_af != socket.AF_UNSPEC and af != src_af:
@@ -99,10 +101,12 @@ def main():
         else:
             myip = socket.inet_pton(af, s.getsockname()[0])
 
-        opcode = CODE_OPEN if args.command == 'open' else CODE_CLOSE
-        msg = struct.pack('<Bd', opcode, time.time())
-        digest = hmac.new(args.psk, msg + myip, hashlib.sha256).digest()
-        s.sendall(msg + digest)
+        msg = struct.pack('<Bdi',
+                          opcode,
+                          time.time(),
+                          sign_af if args.sign_address else af) + myip
+        digest = hmac.new(args.psk, msg, hashlib.sha256).digest()
+        s.sendall(digest + msg)
         s.close()
 
 
