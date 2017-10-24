@@ -55,12 +55,12 @@ def parse_args():
     parser.add_argument("open_cmd",
                         help="template of command used to enable access. "
                         "Example: \"ipset add -exist myset $ip\". "
-                        "Available variables: $ip, $port",
+                        "Available variables: $ip, $af, $cmd",
                         metavar="OPEN_CMD")
     parser.add_argument("close_cmd",
                         help="template of command used to disable access. "
                         "Example: \"ipset del -exist myset $ip\". "
-                        "Available variables: $ip, $port",
+                        "Available variables: $ip, $af, $cmd",
                         metavar="CLOSE_CMD")
     return parser.parse_args()
 
