@@ -21,6 +21,22 @@ CODE_OPEN = 1
 CODE_CLOSE = 2
 
 
+def compare_digest_polyfill(a, b):
+    if len(a) != len(b):
+        return False
+
+    result = 0
+    for x, y in zip(a, b):
+        result |= ord(x) ^ ord(y)
+    return result == 0
+
+
+if sys.hexversion >= 0x020707F0:
+    compare_digest = hmac.compare_digest
+else:
+    compare_digest = compare_digest_polyfill
+
+
 def detect_af(addr):
     return socket.getaddrinfo(addr,
                               None,
@@ -97,10 +113,10 @@ def main():
             if abs(ts - time.time()) > args.time_drift:
                 continue
 
-            if not hmac.compare_digest(hmac.new(args.psk,
-                                                data[DIGEST_SIZE:],
-                                                DIGEST).digest(),
-                                       digest):
+            if not compare_digest(hmac.new(args.psk,
+                                           data[DIGEST_SIZE:],
+                                           DIGEST).digest(),
+                                  digest):
                 continue
 
             str_af = af_map.get(af, str(af))
