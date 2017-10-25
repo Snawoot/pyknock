@@ -3,6 +3,10 @@ pyknock ![Build status](https://api.travis-ci.org/Snawoot/pyknock.svg?branch=mas
 
 UDP port knocking suite with HMAC-PSK authentication.
 
+## Requirements
+
+Only Python 2.6+ or 3.3+ required.
+
 ## Installation
 
 Place file anywhere you want and run.
