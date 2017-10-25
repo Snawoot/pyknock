@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import sys
 import socket
 import hashlib
@@ -22,6 +23,21 @@ def detect_af(addr):
                               socket.AI_NUMERICHOST)[0][0]
 
 
+def check_port(value):
+    ivalue = int(value)
+    if not (0 < ivalue < 65536):
+        raise argparse.ArgumentTypeError(
+            "%s is not a valid port number" % value)
+    return ivalue
+
+
+def psk(value):
+    if (sys.version_info > (3, 0)):
+        return bytes(value, 'latin-1')
+    else:
+        return value
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("command",
@@ -33,11 +49,12 @@ def parse_args():
     parser.add_argument("-p",
                         "--port",
                         help="remote port",
-                        type=int,
+                        type=check_port,
                         default=60120)
     parser.add_argument("psk",
                         help="pre-shared key "
                         "used to authenticate ourselves to knocked peer",
+                        type=psk,
                         metavar="PSK")
     parser.add_argument("-S",
                         "--sign-address",
@@ -50,7 +67,7 @@ def parse_args():
 
 
 def panic(msg, code):
-    print >> sys.stderr, msg
+    sys.stderr.write(msg + os.linesep)
     sys.exit(code)
     pass
 
@@ -65,8 +82,8 @@ def main():
                                     socket.SOCK_DGRAM,
                                     socket.IPPROTO_UDP)
     except Exception as e:
-        print >> sys.stderr, ("Unable to resolve destination address %s: %s" %
-                              (repr(args.address), str(e)))
+        sys.stderr.write("Unable to resolve destination address %s: %s%s" %
+                              (repr(args.address), str(e), os.linesep))
         sys.exit(3)
     assert dst_ai, "Destionation address info must not be empty"
 

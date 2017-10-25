@@ -46,6 +46,21 @@ def detect_af(addr):
                               socket.AI_NUMERICHOST)[0][0]
 
 
+def check_port(value):
+    ivalue = int(value)
+    if not (0 < ivalue < 65536):
+        raise argparse.ArgumentTypeError(
+            "%s is not a valid port number" % value)
+    return ivalue
+
+
+def psk(value):
+    if (sys.version_info > (3, 0)):
+        return bytes(value, 'latin-1')
+    else:
+        return value
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-b",
@@ -55,7 +70,7 @@ def parse_args():
     parser.add_argument("-p",
                         "--port",
                         help="bind port",
-                        type=int, default=60120,
+                        type=check_port, default=60120,
                         metavar="PORT")
     parser.add_argument("-t",
                         "--time-drift",
@@ -67,6 +82,7 @@ def parse_args():
                         metavar="DRIFT")
     parser.add_argument("psk",
                         help="pre-shared key used to authenticate clients",
+                        type=psk,
                         metavar="PSK")
     parser.add_argument("open_cmd",
                         help="template of command used to enable access. "
@@ -130,7 +146,7 @@ def main():
                                                     af=str_af,
                                                     cmd="close"))
     except Exception as e:
-        print >> sys.stderr, "Unhandled Exception: %s" % (str(e),)
+        sys.stderr.write("Unhandled Exception: %s" % (str(e),) + os.linesep)
 
 
 if __name__ == '__main__':

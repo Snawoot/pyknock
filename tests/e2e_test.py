@@ -1,3 +1,4 @@
+import sys
 import pytest
 import os.path
 
@@ -16,8 +17,9 @@ def server_instance():
     import tempfile
 
     exec_path = os.path.join(proj_dir, '..', 'pyknockd.py')
-    with tempfile.TemporaryFile(bufsize=0) as out:
-        with tempfile.TemporaryFile(bufsize=0) as err:
+    tmpfile_kwargs = {"buffering" if sys.version_info > (3, 0) else "bufsize": 1, "mode": "w+"}
+    with tempfile.TemporaryFile(**tmpfile_kwargs) as out:
+        with tempfile.TemporaryFile(**tmpfile_kwargs) as err:
             sp = subprocess.Popen([exec_path,
                                    TEST_PSK,
                                    'echo open=$cmd $ip $af',
@@ -76,9 +78,9 @@ def test_simple(server_instance, sign_ip, cmd, remote_ip, psk, expected):
 
     err.flush()
     err.seek(0)
-    assert err.read() == '', "Unexpected server output"
+    assert len(err.read()) == 0, "Unexpected server output"
 
     out.flush()
     out.seek(0)
-    lines = map(str.rstrip, out.readlines())
+    lines = list(map(str.rstrip, out.readlines()))
     assert lines == expected, "Unexpected server output"
