@@ -24,7 +24,7 @@ Client example:
 Client behind NAT example:
 
 ```bash
-./pyknock.py -S $(curl -s http://canihazip.com/s) open my-protected-host.com MySecretPSK
+./pyknock.py -S $(curl -s https://canihazip.com/s) open my-protected-host.com MySecretPSK
 ```
 
 See help for more options.
