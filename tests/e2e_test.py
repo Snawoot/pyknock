@@ -60,6 +60,7 @@ test_data = [
 ]
 
 
+@pytest.mark.timeout(5)
 @pytest.mark.parametrize('sign_ip,cmd,remote_ip,psk,expected', test_data)
 def test_simple(server_instance, sign_ip, cmd, remote_ip, psk, expected):
     import subprocess
