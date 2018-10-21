@@ -1,4 +1,4 @@
-pyknock ![Build status](https://api.travis-ci.org/Snawoot/pyknock.svg?branch=master)
+pyknock
 =======
 
 UDP port knocking suite with HMAC-PSK authentication.
