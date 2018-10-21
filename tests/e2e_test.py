@@ -16,7 +16,7 @@ def server_instance():
     import os.path
     import tempfile
 
-    exec_path = os.path.join(proj_dir, '..', 'pyknockd.py')
+    exec_path = os.path.join(proj_dir, '..', 'pyknock-server')
     tmpfile_kwargs = {"buffering" if sys.version_info > (3, 0) else "bufsize": 1, "mode": "w+"}
     with tempfile.TemporaryFile(**tmpfile_kwargs) as out:
         with tempfile.TemporaryFile(**tmpfile_kwargs) as err:
@@ -64,7 +64,7 @@ test_data = [
 def test_simple(server_instance, sign_ip, cmd, remote_ip, psk, expected):
     import subprocess
     import time
-    exec_path = os.path.join(proj_dir, '..', 'pyknock.py')
+    exec_path = os.path.join(proj_dir, '..', 'pyknock-client')
 
     subprocess.check_call([exec_path,
                           cmd,

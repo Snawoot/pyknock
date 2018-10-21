@@ -3,39 +3,10 @@
 import os
 import sys
 import socket
-import hashlib
 import hmac
 import argparse
 import time
-import struct
-
-
-CODE_OPEN = 1
-CODE_CLOSE = 2
-
-
-def detect_af(addr):
-    return socket.getaddrinfo(addr,
-                              None,
-                              socket.AF_UNSPEC,
-                              0,
-                              0,
-                              socket.AI_NUMERICHOST)[0][0]
-
-
-def check_port(value):
-    ivalue = int(value)
-    if not (0 < ivalue < 65536):
-        raise argparse.ArgumentTypeError(
-            "%s is not a valid port number" % value)
-    return ivalue
-
-
-def psk(value):
-    if (sys.version_info > (3, 0)):
-        return bytes(value, 'latin-1')
-    else:
-        return value
+from pyknock import *
 
 
 def parse_args():
@@ -83,7 +54,7 @@ def main():
                                     socket.IPPROTO_UDP)
     except Exception as e:
         sys.stderr.write("Unable to resolve destination address %s: %s%s" %
-                              (repr(args.address), str(e), os.linesep))
+                         (repr(args.address), str(e), os.linesep))
         sys.exit(3)
     assert dst_ai, "Destionation address info must not be empty"
 
