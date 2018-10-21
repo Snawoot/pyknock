@@ -6,7 +6,7 @@ with open(path.join(this_directory, 'README.md'), 'rb') as f:
     long_description = f.read().decode('utf-8')
 
 setup(name='pyknock',
-      version='0.4.1',
+      version='0.4.2',
       description='UDP port knocking suite with HMAC-PSK authentication',
       url='https://github.com/Snawoot/pyknock',
       author='Vladislav Yarmak',
