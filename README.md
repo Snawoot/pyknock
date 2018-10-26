@@ -26,7 +26,7 @@ Only Python 2.6+ required. Python 3 is also supported.
 
 ## Installation
 
-Place file anywhere you want and run. Or use `pip install pyknock` to install it as python package into your system. Scripts shall become available at standard binary paths.
+Place file anywhere you want and run. Or use `pip install pyknock` to install it into your system as python package. Scripts shall become available at standard binary paths.
 
 ## Usage
 
